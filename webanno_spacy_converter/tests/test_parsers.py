@@ -1,4 +1,5 @@
 from ..parsers.tsv_parser_v3 import WebAnnoNELParser
+from ..writers.webanno_writer import WebAnnoNELWriter
 
 def pretty_print_sentences(sentences):
     for sentence in sentences:
@@ -11,4 +12,8 @@ parser = WebAnnoNELParser("alzir.tsv")
 parser.parse()
 
 pretty_print_sentences(parser.sentences)
+
+writer = WebAnnoNELWriter(parser.sentences)
+
+writer.save("output.tsv")
 
