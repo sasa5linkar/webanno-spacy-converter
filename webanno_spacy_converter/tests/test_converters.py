@@ -1,13 +1,22 @@
-from ..converters.spacy_to_webanno import DocBinToAnnotationSentencesConverter
-from ..writers.webanno_writer import WebAnnoNELWriter
+from ..converters.webanno_to_spacy import AnnotationSentencesToDocBinConverter
+from ..parsers.tsv_parser_v3 import WebAnnoNELParser
+import os
 import spacy
 
 nlp = spacy.load("my_nlp_el_cnn1")
-converter = DocBinToAnnotationSentencesConverter(nlp)
-senteces = converter.convert("srGeoGeography.spacy")
+converter = AnnotationSentencesToDocBinConverter(nlp)
+#get all .spacy files in the root directory
 
-writer = WebAnnoNELWriter(senteces)
-writer.save("output1.tsv")
+spacy_files = [f for f in os.listdir(".") if f.endswith(".spacy")]
+reader = WebAnnoNELParser("output.tsv")
+
+senteces = reader.parse()
+
+docbin = converter.convert(senteces)
+docbin.to_disk("example.spacy")
+
+
+
 
 
 
