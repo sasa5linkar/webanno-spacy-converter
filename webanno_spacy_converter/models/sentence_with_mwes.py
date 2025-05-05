@@ -15,6 +15,8 @@ class MultiWordExpression:
     lemma: str
     token_count: int
     token_indices: List[int]
+    type: str = ""
+    group_id: str = ""
 
 
 @dataclass
