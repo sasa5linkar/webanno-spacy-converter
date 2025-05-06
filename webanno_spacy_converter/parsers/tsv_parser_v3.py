@@ -4,6 +4,8 @@ from collections import defaultdict
 from typing import DefaultDict
 from ..models.annotation_token import AnnotationToken
 from ..models.annotation_sentence import AnnotationSentence
+from webanno_spacy_converter.models.sentence_with_mwes import MultiWordExpression, AnnotatedSentenceWithMWEs
+
 
 class BaseWebAnnoTSVParser(ABC):
     def __init__(self, file_path: str):
@@ -142,4 +144,53 @@ class WebAnnoNELParser(BaseWebAnnoTSVParser):
             text=sentence_text,
             tokens=tokens,
             entities=entities,
+        )
+class WebAnnoLEXISParser(WebAnnoNELParser):
+    """
+    Extends WebAnnoNELParser to include multi-word expression (MWE) extraction from the LEXIS corpus.
+    """
+
+    def _finalize_sentence(self, sentence_text: str, tokens: List[AnnotationToken]) -> AnnotatedSentenceWithMWEs:
+        base = super()._finalize_sentence(sentence_text, tokens)
+
+        mwe_groups: DefaultDict[str, List[Tuple[int, AnnotationToken]]] = defaultdict(list)
+        mwe_lemmas: DefaultDict[str, str] = defaultdict(str)
+        mwe_types: DefaultDict[str, str] = defaultdict(str)
+
+        for idx, token in enumerate(tokens):
+            mwe_id = token.layers.get("MWEid")
+            mwe_lemma = token.layers.get("MWElemma")
+            mwe_type = token.layers.get("MWEtype")
+
+            if mwe_id and mwe_id != "_":
+                group_id = mwe_id.split("[")[0] if "[" in mwe_id else mwe_id
+                mwe_groups[group_id].append((idx, token))
+
+                # Prefer non-* lemma if available
+                if mwe_lemma and mwe_lemma != "*":
+                    mwe_lemmas[group_id] = mwe_lemmas.get(group_id, "*").split("[")[0].strip()
+
+
+                if mwe_type and mwe_type != "*":
+                    mwe_types[group_id] = mwe_types.get(group_id, "").split("[")[0].strip()
+
+
+        mwes: List[MultiWordExpression] = []
+        for group_id, token_list in mwe_groups.items():
+            token_indices = [idx for idx, _ in token_list]
+            lemma = mwe_lemmas.get(group_id, "*")
+            mwe_type = mwe_types.get(group_id, "")
+            mwes.append(MultiWordExpression(
+                lemma=lemma,
+                token_count=len(token_indices),
+                token_indices=token_indices,
+                type=mwe_type,
+                group_id=group_id
+            ))
+
+        return AnnotatedSentenceWithMWEs(
+            text=base.text,
+            tokens=base.tokens,
+            entities=base.entities,
+            mwes=mwes
         )
