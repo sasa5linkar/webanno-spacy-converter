@@ -32,6 +32,9 @@ class BaseWebAnnoTSVParser(ABC):
                 cleaned = line[len("#T_SP="):]
                 parts = cleaned.split('|')
                 for name in parts[1:]:  # skip the type name
+                    name = name.strip()
+                    if name in self.layer_names.values():
+                        name = f"{name}_{col_index}"
                     self.layer_names[col_index] = name.strip()
                     col_index += 1
 
