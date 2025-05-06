@@ -167,11 +167,11 @@ class WebAnnoLEXISParser(WebAnnoNELParser):
                 mwe_groups[group_id].append((idx, token))
 
                 # Prefer non-* lemma if available
-                if mwe_lemma and mwe_lemma != "*":
+                if mwe_lemma != "*":
                     mwe_lemmas[group_id] = mwe_lemma.split("[")[0].strip()
 
 
-                if mwe_type and mwe_type != "*":
+                if mwe_type != "*":
                     mwe_types[group_id] = mwe_type.split("[")[0].strip()
 
 
