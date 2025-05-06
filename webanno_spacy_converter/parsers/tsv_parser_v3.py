@@ -168,11 +168,11 @@ class WebAnnoLEXISParser(WebAnnoNELParser):
 
                 # Prefer non-* lemma if available
                 if mwe_lemma and mwe_lemma != "*":
-                    mwe_lemmas[group_id] = mwe_lemmas.get(group_id, "*").split("[")[0].strip()
+                    mwe_lemmas[group_id] = mwe_lemma.split("[")[0].strip()
 
 
                 if mwe_type and mwe_type != "*":
-                    mwe_types[group_id] = mwe_types.get(group_id, "").split("[")[0].strip()
+                    mwe_types[group_id] = mwe_type.split("[")[0].strip()
 
 
         mwes: List[MultiWordExpression] = []
