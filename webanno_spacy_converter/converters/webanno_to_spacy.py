@@ -8,7 +8,7 @@ class AnnotationSentencesToDocBinConverter:
 
     Attributes:
         nlp: The spaCy language pipeline.
-        sentences_per_doc: Number of sentences to combine into a single Doc.
+        sentences_per_doc (int): Number of sentences to combine into a single Doc.
     """
 
     def __init__(self, nlp, sentences_per_doc: int = 10):
@@ -26,12 +26,11 @@ class AnnotationSentencesToDocBinConverter:
             DocBin: The resulting DocBin object.
         """
         doc_bin = DocBin(store_user_data=True)
-        batch = []
+        batch: List[Doc] = []
 
         for sent in sentences:
             doc = self._convert_sentence_to_doc(sent)
             batch.append(doc)
-
             if len(batch) == self.sentences_per_doc:
                 combined = Doc.from_docs(batch)
                 doc_bin.add(combined)
@@ -54,14 +53,14 @@ class AnnotationSentencesToDocBinConverter:
             Doc: The spaCy Doc with entities and kb_ids set.
         """
         doc = self.nlp(sent.text)
-        doc[0].is_sent_start = True
+        if doc:
+            doc[0].is_sent_start = True
 
-        spans = []
+        spans: List[Span] = []
         for start, end, label, qid in sent.entities:
             span = doc.char_span(start, end, label=label)
             if span:
                 span.kb_id_ = qid if qid != "*" else "NIL"
                 spans.append(span)
         doc.ents = spans
-
         return doc
