@@ -1,13 +1,12 @@
 from typing import List, Dict, Tuple
-from spacy.tokens import DocBin, Span, Doc
+from spacy.tokens import DocBin, Doc
 from webanno_spacy_converter.models.annotation_sentence import AnnotationSentence
 from webanno_spacy_converter.models.annotation_token import AnnotationToken
-import spacy
 from collections import defaultdict
 
 class DocBinToAnnotationSentencesConverter:
     """
-    Converts a spaCy DocBin or Doc objects into a list of AnnotationSentence objects
+    Converts spaCy DocBin or Doc objects into a list of AnnotationSentence objects
     suitable for WebAnno export.
     """
 
@@ -42,12 +41,10 @@ class DocBinToAnnotationSentencesConverter:
                 kb_id = getattr(ent, 'kb_id_', getattr(ent, 'ent_kb_id_', None))
                 if kb_id is None or kb_id == "NIL":
                     kb_id = "*"
-
                 if ent.end - ent.start > 1:
                     group = str(group_counter)
                     group_ids[span] = group
                     group_counter += 1
-
                 entity_map[span] = (label, kb_id)
 
             for sent in doc.sents:
@@ -65,10 +62,7 @@ class DocBinToAnnotationSentencesConverter:
                             if (span_start, span_end) in group_ids:
                                 g = group_ids[(span_start, span_end)]
                                 layer_data['value'] = f"{label}[{g}]"
-                                if kb_id != "*":
-                                    layer_data['identifier'] = f"{kb_id}[{g}]"
-                                else:
-                                    layer_data['identifier'] = kb_id
+                                layer_data['identifier'] = f"{kb_id}[{g}]" if kb_id != "*" else kb_id
                             else:
                                 layer_data['value'] = label
                                 layer_data['identifier'] = kb_id
