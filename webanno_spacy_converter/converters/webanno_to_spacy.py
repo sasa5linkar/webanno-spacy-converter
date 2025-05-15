@@ -137,6 +137,7 @@ class AnnotationSentencesToDocBinConverterV2(AnnotationSentencesToDocBinConverte
                         span.kb_id_ = qid if qid != "*" else "NIL"
                     spans.append(span)
             doc.ents = spans
+        return doc
 
 
                 
