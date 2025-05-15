@@ -20,7 +20,7 @@ class BaseWebAnnoTSVWriter(ABC):
 
     def save(self, output_path: str) -> None:
         """
-        Saves the annotations to a TSV file at the specified path.
+        Save the annotations to a TSV file at the specified path.
 
         The format includes the WebAnno format header, the annotation layer specification,
         and one block per sentence with token annotations.
@@ -44,13 +44,12 @@ class BaseWebAnnoTSVWriter(ABC):
                     abs_end = token.end + offset
                     line = f"{token.sentence_index}-{token.token_index}\t{abs_start}-{abs_end}\t{token.text}\t" + "\t".join(layers) + "\t"
                     f.write(line + "\n")
-                offset += len(sentence.text) 
-                
+                offset += len(sentence.text)
 
     @abstractmethod
     def _build_layer_header(self) -> str:
         """
-        Constructs the layer header string used by WebAnno.
+        Construct the layer header string used by WebAnno.
 
         Returns:
             str: Header line describing the annotation layers.
@@ -60,7 +59,7 @@ class BaseWebAnnoTSVWriter(ABC):
     @abstractmethod
     def _format_token_layers(self, token: AnnotationToken) -> List[str]:
         """
-        Formats the annotation layers for a single token.
+        Format the annotation layers for a single token.
 
         Args:
             token (AnnotationToken): Token with annotation data.
@@ -69,7 +68,6 @@ class BaseWebAnnoTSVWriter(ABC):
             List[str]: List of string fields representing layers.
         """
         pass
-
 
 class WebAnnoNELWriter(BaseWebAnnoTSVWriter):
     """
@@ -85,7 +83,7 @@ class WebAnnoNELWriter(BaseWebAnnoTSVWriter):
 
     def _build_layer_header(self) -> str:
         """
-        Builds the layer header for NEL output.
+        Build the layer header for NEL output.
 
         Returns:
             str: TSV layer definition line.
@@ -94,7 +92,7 @@ class WebAnnoNELWriter(BaseWebAnnoTSVWriter):
 
     def _format_token_layers(self, token: AnnotationToken) -> List[str]:
         """
-        Extracts NEL-specific annotation data for a token.
+        Extract NEL-specific annotation data for a token.
 
         Args:
             token (AnnotationToken): Token object with layers.
