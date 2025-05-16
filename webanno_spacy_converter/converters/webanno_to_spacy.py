@@ -112,10 +112,11 @@ class AnnotationSentencesToDocBinConverterV2(AnnotationSentencesToDocBinConverte
         # spaces are detrnied by comparing the end postion of the token with the start position of the next token
         # if it same it is not a space, otherwise it is a space. Last token is always not a space
         tokens = sent.tokens
-        spaces = [False] * (len(tokens) - 1) + [True]
+        spaces = [True] * (len(tokens) - 1) + [False]
         for i in range(len(tokens) - 1):
             if tokens[i].end == tokens[i + 1].start:
-                spaces[i] = True
+                spaces[i] = False
+
         if self.tag_layer:
             tags = [token.layers.get(self.tag_layer, "_") for token in tokens]
         else:
@@ -125,7 +126,13 @@ class AnnotationSentencesToDocBinConverterV2(AnnotationSentencesToDocBinConverte
         else:
             lemmas = ["_"] * len(tokens)
 
-        doc = Doc(self.nlp.vocab, words=words, spaces=spaces, tags=tags, lemmas=lemmas)
+        if self.tag_layer:
+            if self.lemma_layer:
+                doc = Doc(self.nlp.vocab, words=words, spaces=spaces, tags=tags, lemmas=lemmas)
+            else:
+                doc = Doc(self.nlp.vocab, words=words, spaces=spaces, tags=tags)
+        else:
+            doc = Doc(self.nlp.vocab, words=words, spaces=spaces)
         if doc:
             doc[0].is_sent_start = True
         if self.ner:
@@ -136,7 +143,7 @@ class AnnotationSentencesToDocBinConverterV2(AnnotationSentencesToDocBinConverte
                     if self.nel:
                         span.kb_id_ = qid if qid != "*" else "NIL"
                     spans.append(span)
-            doc.ents = spans
+            doc.set_ents(spans)
         return doc
 
 

@@ -4,7 +4,7 @@ import spacy
 
 def main():
     nlp = spacy.load("my_nlp_el_cnn1")
-    converter = AnnotationSentencesToDocBinConverterV2(nlp)
+    converter = AnnotationSentencesToDocBinConverterV2(nlp, ner =True, nel=True)
     reader = WebAnnoNELParser("test_data/output.tsv")
     sentences = reader.parse()
     docbin = converter.convert(sentences)
