@@ -103,7 +103,7 @@ class WebAnnoNELWriter(BaseWebAnnoTSVWriter):
         identifier = token.layers.get("identifier", "_")
         value = token.layers.get("value", "_")
 
-        if identifier != "*" and identifier != "_" and not identifier.startswith("http"):
+        if identifier != "*" and identifier != "_" and len(identifier)>0 and not identifier.startswith("http"):
             identifier = f"http://www.wikidata.org/entity/{identifier}"
 
         return [identifier, value]

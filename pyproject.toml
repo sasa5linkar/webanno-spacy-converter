@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webanno_spacy_converter"
+version = "0.1.1"
+description = "Tools to convert between WebAnno TSV and spaCy formats"
+authors = [
+    { name = "SasaP" }
+]
+requires-python = ">=3.7"
+dependencies = [
+    "spacy>=3.5",
+    "cyrtranslit"
+]
+
+[tool.setuptools.packages.find]
+where = ["webanno_spacy_converter"]
