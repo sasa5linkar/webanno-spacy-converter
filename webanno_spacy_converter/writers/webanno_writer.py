@@ -105,5 +105,11 @@ class WebAnnoNELWriter(BaseWebAnnoTSVWriter):
 
         if identifier != "*" and identifier != "_" and len(identifier)>0 and not identifier.startswith("http"):
             identifier = f"http://www.wikidata.org/entity/{identifier}"
+        
+        if len(identifier) == 0:
+            if value == "_":
+                identifier = "_"
+            else:
+                identifier = "*"
 
         return [identifier, value]
